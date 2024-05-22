@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "../styles/Auth.module.css";
-import Tesseract from "tesseract.js";
+
 import {
   faCheck,
   faTimes,
@@ -34,12 +34,13 @@ export const User_SignUp = () => {
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const [Profile_pic, setProfile_pic] = useState("");
+  const [profile_pic, setProfile_pic] = useState("");
   const [location, setLocation] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
   const [cnic_number, setCnic_number] = useState("");
+    const [bio, setBio] = useState("");
   const [cnic_pic, setCnic_pic] = useState("");
-
+ const [sellerType, setSellerType] = useState("Regular");
   const [nextComp, setNextComp] = useState(true);
 
   useEffect(() => {
@@ -69,32 +70,41 @@ export const User_SignUp = () => {
       setErrMsg("Invalid Entry");
       return;
     }
+    
+
+
     try {
       const response = await fetch("http://localhost:8000/usersApi/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          name,
           username,
           email,
           password: pwd,
           location,
-          Profile_pic,
+          profile_pic,
+          phoneNo,
           cnic_number,
           cnic_pic,
-          phoneNo,
+          sellerType,
+          bio
         }),
       });
       const data = await response.json();
-      console.log(data);
-      if (data.detail) {
-        setError(data.detail);
+      if (data.error) {
+        setErrMsg(data.error);
       } else {
-        window.location.reload();
+        setSuccess(true);
+        setErrMsg("");
       }
     } catch (error) {
       console.error(error);
+      setErrMsg("Server Error");
     }
   };
+
+
   const handleProfilePic = (e) => {
     setProfile_pic(e.target.files[0]);
   };
@@ -103,75 +113,38 @@ export const User_SignUp = () => {
     setCnic_pic(e.target.files[0]);
   };
 
-  const preprocessImage = (image) => {
-    // Add any image preprocessing steps here if needed
-    // For example, converting to grayscale, resizing, etc.
-    return image;
-  };
 
-  const handleCNICVerification = async () => {
-    if (!cnic_pic) {
-      setErrMsg("Please upload CNIC picture");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.readAsDataURL(cnic_pic);
-    reader.onload = async () => {
-      const image = preprocessImage(reader.result);
-
-      const result = await Tesseract.recognize(image, "eng+urd", {
-        logger: (m) => console.log(m),
-      });
-
-      let text = result.data.text;
-      // Remove non-English characters (including Urdu)
-      text = text.replace(/[^\x00-\x7F]/g, "");
-      console.log("OCR Result (English only):", text);
-
-      // Regular expression patterns to match CNIC details
-      const cnicPattern = /\b\d{5}-\d{7}-\d{1}\b/;
-      const datePattern = /\b\d{2}\.\d{2}\.\d{4}\b/;
-
-      // Extract CNIC number
-      const cnicMatch = text.match(cnicPattern);
-      if (cnicMatch) {
-        const extractedCNIC = cnicMatch[0];
-        setCnic_number(extractedCNIC);
-        setSuccess(true);
-        setErrMsg("");
-      } else {
-        setSuccess(false);
-        setErrMsg("CNIC Number not found in the OCR result");
-      }
-
-      // Extract dates
-      const dates = text.match(datePattern);
-      if (dates) {
-        const [dob, issueDate, expiryDate] = dates;
-        console.log("Date of Birth:", dob);
-        console.log("Date of Issue:", issueDate);
-        console.log("Date of Expiry:", expiryDate);
-      } else {
-        console.log("Dates not found");
-      }
-    };
-    reader.onerror = (error) => {
-      console.error(error);
-      setErrMsg("Error reading CNIC picture");
-    };
-  };
 
   const nextCompBtn = () => {
+    setNextComp(!nextComp);
+  };
+  const nextCompAsDesigner = () => {
+    setSellerType("Designer")
+    setNextComp(!nextComp);
+  }; 
+   const nextCompAsPrinterOwner = () => {
+     setSellerType("Printer Owner");
     setNextComp(!nextComp);
   };
 
   const backCompBtn = () => {
     setNextComp(!nextComp);
   };
+console.log(
+   name,
+          username,
+          email,
+          pwd,
+          location,
+          profile_pic,
+          phoneNo,
+          cnic_number,
+          cnic_pic,
+          sellerType,
+          bio
 
-  console.log(cnic_pic);
-  console.log("name:", name);
+)
+
   return (
     <div class="flex min-h-full flex-col justify-center">
       <div class="mt-14 mb-0 ">
@@ -199,6 +172,7 @@ export const User_SignUp = () => {
                     id="name"
                     placeholder="Enter Name"
                     value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
 
@@ -409,8 +383,10 @@ export const User_SignUp = () => {
               <button onClick={SubmitBtn}>Submit</button>
               <div>
                 <p>Become A Seller</p>
-                <button onClick={nextCompBtn}>As Printer Owner</button>
-                <button onClick={nextCompBtn}>As Model Designer</button>
+                <button onClick={nextCompAsPrinterOwner}>
+                  As Printer Owner
+                </button>
+                <button onClick={nextCompAsDesigner}>As Model Designer</button>
               </div>
 
               <p class="mt-10 text-center text-sm text-gray-500">
@@ -438,6 +414,16 @@ export const User_SignUp = () => {
                 />
               </div>
               <div>
+                <label htmlFor="bio">Enter Bio</label>
+                <input
+                  type="text"
+                  id="bio"
+                  name="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                />
+              </div>
+              <div>
                 <label htmlFor="cnic_pic">Upload Cnic</label>
                 <input
                   type="file"
@@ -446,7 +432,7 @@ export const User_SignUp = () => {
                   onChange={handleCnicPic}
                 />
               </div>
-              <button onClick={handleCNICVerification}>Submit</button>
+              <button onClick={SubmitBtn}>Submit</button>
               <button onClick={backCompBtn}>Back</button>
             </div>
           </>
