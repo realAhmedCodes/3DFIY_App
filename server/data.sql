@@ -13,13 +13,13 @@ CREATE TABLE users (
 
 );
 
-CREATE TABLE designers (
+CREATE TABLE Designer (
     designer_id SERIAL PRIMARY KEY,
-    user_id SERIAL REFERENCES users(user_id),
+    user_id INT REFERENCES users(user_id),
     cnic_number VARCHAR(50) UNIQUE NOT NULL,
     cnic_pic BYTEA UNIQUE NOT NULL,
     bio VARCHAR(255) NOT NULL,
-    ratings VARCHAR(255) NOT NULL,
+    ratings VARCHAR(255)
 );
 
 CREATE TABLE printer_owner(
@@ -31,6 +31,28 @@ CREATE TABLE printer_owner(
     ratings VARCHAR(255) NOT NULL,
     quality_certificate
 );
+
+CREATE TABLE category(
+    category_id SERIAL PRIMARY KEY,
+    parent_category_id SERIAL REFERENCES category(category_id), \\ self REFERENCES relation
+    type VARCHAR(50) UNIQUE NOT NULL,
+    image BYTEA UNIQUE NOT NULL,
+);
+
+
+CREATE TABLE model(
+    model_id SERIAL PRIMARY KEY,
+    category_id SERIAL REFERENCES category(category_id)
+    designer_id SERIAL REFERENCES designers(designer_id),
+    name VARCHAR(50) UNIQUE NOT NULL,
+    description VARCHAR(50) UNIQUE NOT NULL,
+    price VARCHAR(255) NOT NULL,
+    is_free boolean NOT NULL,
+    image BYTEA NOT NULL,
+    likes_count INT,
+    download_count INT
+);
+
 
 
 username,

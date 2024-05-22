@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Designers', {
+    await queryInterface.createTable("Designer", {
       designer_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -11,9 +11,10 @@ module.exports = {
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        unique: true,
         references: {
-          model: 'Users', // assuming the table name for the User model is 'Users'
-          key: 'user_id',
+          model: "User", // Ensure the correct table name for the Users model
+          key: "user_id",
         },
       },
       cnic_number: {
@@ -23,6 +24,7 @@ module.exports = {
       },
       cnic_pic: {
         type: Sequelize.BLOB,
+        unique: true,
         allowNull: false,
       },
       bio: {
@@ -34,19 +36,19 @@ module.exports = {
         allowNull: true,
       },
       createdAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        allowNull: false,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        allowNull: false,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Designers');
+    await queryInterface.dropTable("Designer");
   },
 };

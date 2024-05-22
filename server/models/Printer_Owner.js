@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../sequelize"); // Make sure this path is correct
 const User = require("../models/User"); // Assuming this path is correct
 
-const PrinterOwner = sequelize.define("PrinterOwner", {
+const Printer_Owner = sequelize.define("Printer_Owner", {
   printer_owner_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -40,6 +40,6 @@ const PrinterOwner = sequelize.define("PrinterOwner", {
 });
 
 // Establish relationships if not already defined
-PrinterOwner.belongsTo(User, { foreignKey: "user_id" });
+Printer_Owner.belongsTo(User, { foreignKey: "user_id" });
 
-module.exports = PrinterOwner;
+module.exports = Printer_Owner;

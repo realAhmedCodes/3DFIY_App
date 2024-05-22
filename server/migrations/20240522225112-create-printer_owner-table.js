@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("PrinterOwners", {
+    await queryInterface.createTable("printer_owner", {
       printer_owner_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Users", // assuming the table name for the User model is 'Users'
+          model: "User", // Name of the table being referenced
           key: "user_id",
         },
       },
@@ -34,23 +34,23 @@ module.exports = {
         allowNull: true,
       },
       quality_certificate: {
-        type: Sequelize.BLOB, // Use Sequelize.BLOB for storing binary data like documents and pictures
+        type: Sequelize.BLOB,
         allowNull: true,
       },
       createdAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        allowNull: false,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        allowNull: false,
+        defaultValue: Sequelize.fn("NOW"),
       },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("PrinterOwners");
+    await queryInterface.dropTable("printer_owner");
   },
 };
