@@ -2,7 +2,8 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("category", {
+    await queryInterface.createTable("Category", {
+      // Ensure the table name matches the model
       category_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -12,20 +13,15 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: "category", // Self-referencing table
+          model: "Category", // Self-referencing table
           key: "category_id",
         },
         onDelete: "CASCADE", // Optional: handle deletion of parent categories
         onUpdate: "CASCADE",
       },
-      type: {
+      name: {
         type: Sequelize.STRING(50),
-        unique: true,
-        allowNull: false,
-      },
-      image: {
-        type: Sequelize.BLOB,
-        unique: true,
+        unique: false,
         allowNull: false,
       },
       createdAt: {
@@ -42,6 +38,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("category");
+    await queryInterface.dropTable("Category");
   },
 };
