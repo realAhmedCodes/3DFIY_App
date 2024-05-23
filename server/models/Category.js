@@ -1,31 +1,41 @@
-// models/category.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../sequelize"); // Assuming you have a database configuration file
+const sequelize = require("../sequelize"); // Ensure this path is correct based on your project structure
 
-const Category = sequelize.define("Category", {
-  category_id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  parent_category_id: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: "Category",
-      key: "category_id",
+const Category = sequelize.define(
+  "category",
+  {
+    category_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    allowNull: true, // Allow NULL values for the root category
+    parent_category_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "category", // Make sure this is the same as the table name defined in the migration
+        key: "category_id",
+      },
+      allowNull: true, // Allow NULL values for the root category
+    },
+    name: {
+      type: DataTypes.STRING(50),
+      unique: false,
+      allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
   },
-  type: {
-    type: DataTypes.STRING(50),
-    unique: true,
-    allowNull: false,
-  },
-  image: {
-    type: DataTypes.BLOB,
-    unique: true,
-    allowNull: false,
-  },
-});
+  {
+    tableName: "category", // Ensure this matches the table name in your migration
+  }
+);
 
 module.exports = Category;
