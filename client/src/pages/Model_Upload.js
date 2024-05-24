@@ -10,18 +10,35 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const Model_Upload = () => {
-  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState([]); // Initialize as an empty array
+  const [selectedCategory, setSelectedCategory] = useState(""); // Separate state for selected category
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [isFree, setIsFree] = useState(false);
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null); // Default to null
   const [tags, setTags] = useState([]);
   const [tagsInput, setTagsInput] = useState("");
 
   useEffect(() => {
-    console.log(category);
-  }, [category]);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/categoryApi/category`
+        );
+
+        const categoryData = await response.json();
+        setCategories(categoryData);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log("Categories fetched:", categories);
+  }, [categories]);
 
   const Chip = ({ label, onDelete }) => {
     return (
@@ -68,26 +85,32 @@ export const Model_Upload = () => {
           </div>
           <div>
             <select
-              onChange={(e) => {
-                setCategory(e.target.value);
-              }}
+              value={selectedCategory} // Ensure the selected value is correctly handled
+              onChange={(e) => setSelectedCategory(e.target.value)}
               className="mb-4 p-2 border border-gray-300 rounded w-full"
             >
               <option value="">Select Category</option>
+              {Array.isArray(categories) &&
+                categories.map((category) => (
+                  <option
+                    key={category.category_id}
+                    value={category.category_id}
+                  >
+                    {category.name}
+                  </option>
+                ))}
               <option value="other">Other</option>
             </select>
-            {category === "other" ? (
+            {selectedCategory === "other" ? (
               <>
                 <label htmlFor="category">Type Category</label>
                 <input
                   type="text"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
                 />
               </>
-            ) : (
-              ""
-            )}
+            ) : null}
           </div>
           <div>
             <label htmlFor="description">Enter Description</label>
