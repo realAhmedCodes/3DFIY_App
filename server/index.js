@@ -9,12 +9,12 @@ const jwt = require("jsonwebtoken")
 const sequelize = require("./sequelize");
 //Routes imports
 const userRouter = require("./Routes/users.js");
-
+const categoryRouter= require("./Routes/category.js")
 // Server Setup
 app.use(cors())
 app.use(express.json())
 app.use("/usersApi", userRouter);
-
+app.use("/categoryApi", categoryRouter)
 
 app.get("/", (req, res) => {
   res.send("Welcome to the root path!");

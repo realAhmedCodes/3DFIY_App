@@ -53,6 +53,9 @@ CREATE TABLE model(
     download_count INT
 );
 
+INSERT INTO Category
+SELECT * FROM category;
+
 
 
 username,

@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../sequelize"); // Ensure this path is correct based on your project structure
 
 const Category = sequelize.define(
-  "category",
+  "Category",
   {
     category_id: {
       type: DataTypes.INTEGER,
@@ -12,7 +12,7 @@ const Category = sequelize.define(
     parent_category_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "category", // Make sure this is the same as the table name defined in the migration
+        model: "Category", // Make sure this is the same as the table name defined in the migration
         key: "category_id",
       },
       allowNull: true, // Allow NULL values for the root category
@@ -34,7 +34,7 @@ const Category = sequelize.define(
     },
   },
   {
-    tableName: "category", // Ensure this matches the table name in your migration
+    tableName: "Category", // Ensure this matches the table name in your migration
   }
 );
 

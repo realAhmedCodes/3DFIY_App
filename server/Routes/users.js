@@ -95,4 +95,18 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+router.get("/users", async (req, res) => {
+  try {
+    const category = await User.findAll({
+      order: [["createdAt", "DESC"]],
+      limit: 5,
+    });
+    res.json(category); // Return 'categories' instead of 'category'
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;
