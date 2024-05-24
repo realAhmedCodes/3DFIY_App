@@ -11,7 +11,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const Model_Upload = () => {
   const [categories, setCategories] = useState([]); // Initialize as an empty array
-  const [selectedCategory, setSelectedCategory] = useState(""); // Separate state for selected category
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [subcategories, setSubCategories] = useState([]);
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
+  const [subSubcategories, setSubSubCategories] = useState([]);
+  const [selectedSubSubCategory, setSelectedSubSubCategory] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -20,13 +24,14 @@ export const Model_Upload = () => {
   const [tags, setTags] = useState([]);
   const [tagsInput, setTagsInput] = useState("");
 
+  console.log(selectedSubCategory);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
           `http://localhost:8000/categoryApi/category`
         );
-
         const categoryData = await response.json();
         setCategories(categoryData);
       } catch (err) {
@@ -37,8 +42,53 @@ export const Model_Upload = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Categories fetched:", categories);
-  }, [categories]);
+    if (selectedCategory && selectedCategory !== "other") {
+      const fetchSubCategories = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/categoryApi/subcategories/${selectedCategory}`
+          );
+          const subCategoryData = await response.json();
+          setSubCategories(subCategoryData);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      fetchSubCategories();
+    } else {
+      setSubCategories([]);
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if (selectedSubCategory && selectedSubCategory !== "other") {
+      const fetchSubSubCategories = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/categoryApi/subcategories/${selectedSubCategory}`
+          );
+          const subSubCategoryData = await response.json();
+          setSubSubCategories(subSubCategoryData);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      fetchSubSubCategories();
+    } else {
+      setSubSubCategories([]);
+    }
+  }, [selectedSubCategory]);
+
+  useEffect(() => {
+    console.log(
+      "Categories fetched:",
+      categories,
+      "Subcategories fetched:",
+      subcategories,
+      "SubSubcategories fetched:",
+      subSubcategories
+    );
+  }, [categories, subcategories, subSubcategories]);
 
   const Chip = ({ label, onDelete }) => {
     return (
@@ -85,7 +135,7 @@ export const Model_Upload = () => {
           </div>
           <div>
             <select
-              value={selectedCategory} // Ensure the selected value is correctly handled
+              value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="mb-4 p-2 border border-gray-300 rounded w-full"
             >
@@ -101,7 +151,7 @@ export const Model_Upload = () => {
                 ))}
               <option value="other">Other</option>
             </select>
-            {selectedCategory === "other" ? (
+            {selectedCategory === "other" && (
               <>
                 <label htmlFor="category">Type Category</label>
                 <input
@@ -110,7 +160,73 @@ export const Model_Upload = () => {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 />
               </>
-            ) : null}
+            )}
+            <div>
+              {selectedCategory && selectedCategory !== "other" && (
+                <>
+                  <select
+                    value={selectedSubCategory}
+                    onChange={(e) => setSelectedSubCategory(e.target.value)}
+                    className="mb-4 p-2 border border-gray-300 rounded w-full"
+                  >
+                    <option value="">Select Sub Category</option>
+                    {Array.isArray(subcategories) &&
+                      subcategories.map((subCategory) => (
+                        <option
+                          key={subCategory.category_id}
+                          value={subCategory.category_id}
+                        >
+                          {subCategory.name}
+                        </option>
+                      ))}
+                    <option value="other">Other</option>
+                  </select>
+                </>
+              )}
+            </div>
+            {selectedSubCategory === "other" && (
+              <>
+                <label htmlFor="subcategory">Type Sub Category</label>
+                <input
+                  type="text"
+                  value={selectedSubCategory}
+                  onChange={(e) => setSelectedSubCategory(e.target.value)}
+                />
+              </>
+            )}
+            <div>
+              {selectedSubCategory && selectedSubCategory !== "other" && (
+                <>
+                  <select
+                    value={selectedSubSubCategory}
+                    onChange={(e) => setSelectedSubSubCategory(e.target.value)}
+                    className="mb-4 p-2 border border-gray-300 rounded w-full"
+                  >
+                    <option value="">Select Sub Sub Category</option>
+                    {Array.isArray(subSubcategories) &&
+                      subSubcategories.map((subSubCategory) => (
+                        <option
+                          key={subSubCategory.category_id}
+                          value={subSubCategory.category_id}
+                        >
+                          {subSubCategory.name}
+                        </option>
+                      ))}
+                    <option value="other">Other</option>
+                  </select>
+                </>
+              )}
+            </div>
+            {selectedSubSubCategory === "other" && (
+              <>
+                <label htmlFor="subsubcategory">Type Sub Sub Category</label>
+                <input
+                  type="text"
+                  value={selectedSubSubCategory}
+                  onChange={(e) => setSelectedSubSubCategory(e.target.value)}
+                />
+              </>
+            )}
           </div>
           <div>
             <label htmlFor="description">Enter Description</label>
