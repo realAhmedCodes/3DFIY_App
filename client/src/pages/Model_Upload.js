@@ -100,35 +100,40 @@ const[category_id, setCategory_Id]=useState(null)
     }
   }, [selectedSubCategory]);
 
-const handleSubmit= async(e)=>{
-e.preventDefault()
-try {
-  const response = await fetch("http://localhost:8000/usersApi/signup", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      category_id,
-      designer_id,
-      name,
-      image,
-      description,
-      price,
-      tags,
-      modelFile
-    }),
-  });
-  const data = await response.json();
-  if (data.error) {
-    console.log(data.error);
-  } else {
-    console.log(true);
-    console.log("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const formData = new FormData();
+  formData.append("category_id", category_id);
+  formData.append("designer_id", designer_id);
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("price", price);
+  formData.append("is_free", isFree);
+  formData.append("image", image);
+  formData.append("modelFile", modelFile);
+
+  try {
+    const response = await fetch("http://localhost:8000/modelApi/uploadModel", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+    if (data.error) {
+      console.log(data.error);
+    } else {
+      console.log("Model uploaded successfully:", data);
+    }
+  } catch (error) {
+    console.error(error);
+    console.log("Server Error");
   }
-} catch (error) {
-  console.error(error);
-  console.log("Server Error");
-}
-}
+};
+
+const handleFileChange = (e) => {
+  setModelFile(e.target.files[0]);
+};
+
+
 
 
   const Chip = ({ label, onDelete }) => (
@@ -365,7 +370,7 @@ try {
             <div>
               <label htmlFor="modelFile">Upload Your 3D Model</label>
               <input
-                onChange={(e) => setModelFile(e.target.value)}
+                onChange={handleFileChange}
                 type="file"
                 name="modelFile"
                 id=""
@@ -376,7 +381,7 @@ try {
         <div>
           <div>
             <label htmlFor="image">Upload Image</label>
-            <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+            <input type="file" onChange={(e)=>setImage(e.target.files[0])} />
           </div>
         </div>
         <button onClick={handleSubmit}>Upload Model</button>
