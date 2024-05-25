@@ -114,6 +114,21 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/designers", async (req, res) => {
+  try {
+    const category = await Designer.findAll({
+      order: [["createdAt", "DESC"]],
+      
+    });
+    res.json(category); 
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
+
 router.get("/users", async (req, res) => {
   try {
     const category = await User.findAll({
