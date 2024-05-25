@@ -75,15 +75,34 @@ router.post("/login", async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
 
     if (match) {
-      const tokenPayload = {
+      let sellerId = null;
+      let tokenPayload = {
         user_id: user.user_id,
         email: user.email,
         sellerType: user.sellerType,
       };
 
-      const token = jwt.sign(tokenPayload,  `${process.env.ACCESS_TOKEN_SECRET}`, {
-        expiresIn: "1hr",
-      });
+      if (user.sellerType === "Designer") {
+        const designer = await Designer.findOne({
+          where: { user_id: user.user_id },
+        });
+        sellerId = designer ? designer.designer_id : null;
+        tokenPayload.user_id = sellerId;
+      } else if (user.sellerType === "Printer Owner") {
+        const printerOwner = await PrinterOwner.findOne({
+          where: { user_id: user.user_id },
+        });
+        sellerId = printerOwner ? printerOwner.printerOwner_id : null;
+        tokenPayload.user_id = sellerId;
+      }
+
+      const token = jwt.sign(
+        tokenPayload,
+        `${process.env.ACCESS_TOKEN_SECRET}`,
+        {
+          expiresIn: "1hr",
+        }
+      );
 
       res.json({ email: user.email, token });
     } else {
@@ -94,7 +113,6 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ detail: "Internal Server Error" });
   }
 });
-
 
 router.get("/users", async (req, res) => {
   try {

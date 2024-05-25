@@ -28,24 +28,28 @@ const Model = sequelize.define("Model", {
   },
   name: {
     type: DataTypes.STRING(50),
-    unique: true,
+    unique: false,
     allowNull: false,
   },
   description: {
     type: DataTypes.STRING(50),
-    unique: true,
+    unique: false,
     allowNull: false,
   },
   price: {
     type: DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: true,
   },
   is_free: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
   },
   image: {
-    type: DataTypes.BLOB,
+    type: DataTypes.BLOB("long"),
+    allowNull: false,
+  },
+  model_file: {
+    type: DataTypes.BLOB("long"),
     allowNull: false,
   },
   likes_count: {

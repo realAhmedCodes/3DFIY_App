@@ -3,7 +3,7 @@ import styles from "../styles/Auth.module.css";
 import { useCookies } from "react-cookie";
 
 
-import { jwtDecode, InvalidTokenError } from "jwt-decode"; // Import jwtDecode instead of jwt_decode
+import { jwtDecode, InvalidTokenError } from "jwt-decode"; 
 
 
 

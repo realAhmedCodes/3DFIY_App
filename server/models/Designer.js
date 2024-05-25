@@ -1,6 +1,5 @@
-// models/designer.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../sequelize"); // Assuming you have a database configuration file
+const sequelize = require("../sequelize");
 const User = require("../models/User");
 
 const Designer = sequelize.define("Designer", {

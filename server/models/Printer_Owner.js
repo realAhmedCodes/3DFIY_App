@@ -23,6 +23,7 @@ const Printer_Owner = sequelize.define("Printer_Owner", {
   },
   cnic_pic: {
     type: DataTypes.BLOB,
+    unique: true,
     allowNull: false,
   },
   bio: {

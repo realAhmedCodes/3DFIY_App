@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "User", // Name of the table being referenced
+          model: "Users", // Name of the table being referenced
           key: "user_id",
         },
       },
@@ -23,6 +23,7 @@ module.exports = {
       },
       cnic_pic: {
         type: Sequelize.BLOB,
+        unique: true,
         allowNull: false,
       },
       bio: {

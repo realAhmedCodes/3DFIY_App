@@ -41,6 +41,10 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
+  sellerType: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+  }
 });
 
 module.exports = User;

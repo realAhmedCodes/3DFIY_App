@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "category",
+          model: "Category",
           key: "category_id",
         },
         onDelete: "CASCADE",
@@ -30,23 +30,27 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING(50),
-        unique: true,
+        unique: false,
         allowNull: false,
       },
       description: {
         type: Sequelize.STRING(50),
-        unique: true,
+        unique: false,
         allowNull: false,
       },
       price: {
         type: Sequelize.STRING(255),
-        allowNull: false,
+        allowNull: true,
       },
       is_free: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
       image: {
+        type: Sequelize.BLOB("long"),
+        allowNull: false,
+      },
+      model_file: {
         type: Sequelize.BLOB,
         allowNull: false,
       },
