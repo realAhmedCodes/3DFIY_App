@@ -10,11 +10,13 @@ const sequelize = require("./sequelize");
 //Routes imports
 const userRouter = require("./Routes/users.js");
 const categoryRouter= require("./Routes/category.js")
+const modelRouter= require("./Routes/models.js")
 // Server Setup
 app.use(cors())
 app.use(express.json())
 app.use("/usersApi", userRouter);
 app.use("/categoryApi", categoryRouter)
+app.use("/modelApi", modelRouter)
 
 app.get("/", (req, res) => {
   res.send("Welcome to the root path!");
