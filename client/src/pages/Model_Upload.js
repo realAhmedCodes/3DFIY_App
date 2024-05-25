@@ -1,36 +1,56 @@
 import React, { useEffect, useState } from "react";
-import {
-  faCheck,
-  faTimes,
-  faInfoCircle,
-  faTrash,
-  faXmark,
-  faXmarkCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCookies } from "react-cookie";
 
+import { jwtDecode, InvalidTokenError } from "jwt-decode";
 export const Model_Upload = () => {
-  const [categories, setCategories] = useState([]); // Initialize as an empty array
+  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [customCategory, setCustomCategory] = useState("");
   const [subcategories, setSubCategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
+  const [customSubCategory, setCustomSubCategory] = useState("");
   const [subSubcategories, setSubSubCategories] = useState([]);
   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState("");
+  const [customSubSubCategory, setCustomSubSubCategory] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [isFree, setIsFree] = useState(false);
-  const [image, setImage] = useState(null); // Default to null
+  const [isFree, setIsFree] = useState(null);
+  const [image, setImage] = useState(null);
   const [tags, setTags] = useState([]);
   const [tagsInput, setTagsInput] = useState("");
+  const[modelFile, setModelFile]= useState(null)
+const[designer_id, setDesigner_Id]=useState(null)
+const[category_id, setCategory_Id]=useState(null)
+  const [checkToken, setCheckToken] = useState("");
 
-  console.log(selectedSubCategory);
+  useEffect(() => {
+    const token = window.sessionStorage.getItem("token");
+    setCheckToken(token || "");
+    try {
+      if (token) {
+        const decodedToken = jwtDecode(token);
+      
+       
+        const userId = decodedToken.user_id;
+        setDesigner_Id(userId);
+       
+      }
+    } catch (error) {
+      if (error instanceof InvalidTokenError) {
+        console.error("Invalid token");
+      }
+    }
+  }, []);
+  console.log(designer_id)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/categoryApi/category`
+          "http://localhost:8000/categoryApi/category"
         );
         const categoryData = await response.json();
         setCategories(categoryData);
@@ -40,6 +60,7 @@ export const Model_Upload = () => {
     };
     fetchData();
   }, []);
+  console.log(category_id)
 
   useEffect(() => {
     if (selectedCategory && selectedCategory !== "other") {
@@ -79,30 +100,48 @@ export const Model_Upload = () => {
     }
   }, [selectedSubCategory]);
 
-  useEffect(() => {
-    console.log(
-      "Categories fetched:",
-      categories,
-      "Subcategories fetched:",
-      subcategories,
-      "SubSubcategories fetched:",
-      subSubcategories
-    );
-  }, [categories, subcategories, subSubcategories]);
+const handleSubmit= async(e)=>{
+e.preventDefault()
+try {
+  const response = await fetch("http://localhost:8000/usersApi/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      category_id,
+      designer_id,
+      name,
+      image,
+      description,
+      price,
+      tags,
+      modelFile
+    }),
+  });
+  const data = await response.json();
+  if (data.error) {
+    console.log(data.error);
+  } else {
+    console.log(true);
+    console.log("");
+  }
+} catch (error) {
+  console.error(error);
+  console.log("Server Error");
+}
+}
 
-  const Chip = ({ label, onDelete }) => {
-    return (
-      <div className="inline-block font-semibold py-2 pl-3 capitalize w-fit text-white px-2 rounded-full bg-blue-400">
-        <span>{label}</span>
-        <button
-          className="ml-2 text-gray-100 rounded-full text-center font-bold"
-          onClick={onDelete}
-        >
-          <FontAwesomeIcon className="w-3 text-red-600" icon={faXmark} />
-        </button>
-      </div>
-    );
-  };
+
+  const Chip = ({ label, onDelete }) => (
+    <div className="inline-block font-semibold py-2 pl-3 capitalize w-fit text-white px-2 rounded-full bg-blue-400">
+      <span>{label}</span>
+      <button
+        className="ml-2 text-gray-100 rounded-full text-center font-bold"
+        onClick={onDelete}
+      >
+        <FontAwesomeIcon className="w-3 text-red-600" icon={faXmark} />
+      </button>
+    </div>
+  );
 
   const handleAddTags = (e) => {
     e.preventDefault();
@@ -121,6 +160,24 @@ export const Model_Upload = () => {
     setTags(updatedTags);
   };
 
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+    setCategory_Id(e.target.value)
+    setSelectedSubCategory(""); // Reset subcategory
+    setSelectedSubSubCategory(""); // Reset sub-subcategory
+  };
+
+  const handleSubCategoryChange = (e) => {
+    setSelectedSubCategory(e.target.value);
+    setCategory_Id(e.target.value);
+    setSelectedSubSubCategory(""); // Reset sub-subcategory
+  };
+
+  const handleSubSubCategoryChange = (e) => {
+    setSelectedSubSubCategory(e.target.value);
+    setCategory_Id(e.target.value);
+  };
+
   return (
     <div className="main_div">
       <div className="form_div">
@@ -135,8 +192,8 @@ export const Model_Upload = () => {
           </div>
           <div>
             <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              value={selectedCategory === "other" ? "other" : selectedCategory}
+              onChange={handleCategoryChange}
               className="mb-4 p-2 border border-gray-300 rounded w-full"
             >
               <option value="">Select Category</option>
@@ -153,11 +210,11 @@ export const Model_Upload = () => {
             </select>
             {selectedCategory === "other" && (
               <>
-                <label htmlFor="category">Type Category</label>
+                <label htmlFor="customCategory">Type Category</label>
                 <input
                   type="text"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
                 />
               </>
             )}
@@ -165,8 +222,12 @@ export const Model_Upload = () => {
               {selectedCategory && selectedCategory !== "other" && (
                 <>
                   <select
-                    value={selectedSubCategory}
-                    onChange={(e) => setSelectedSubCategory(e.target.value)}
+                    value={
+                      selectedSubCategory === "other"
+                        ? "other"
+                        : selectedSubCategory
+                    }
+                    onChange={handleSubCategoryChange}
                     className="mb-4 p-2 border border-gray-300 rounded w-full"
                   >
                     <option value="">Select Sub Category</option>
@@ -186,11 +247,11 @@ export const Model_Upload = () => {
             </div>
             {selectedSubCategory === "other" && (
               <>
-                <label htmlFor="subcategory">Type Sub Category</label>
+                <label htmlFor="customSubCategory">Type Sub Category</label>
                 <input
                   type="text"
-                  value={selectedSubCategory}
-                  onChange={(e) => setSelectedSubCategory(e.target.value)}
+                  value={customSubCategory}
+                  onChange={(e) => setCustomSubCategory(e.target.value)}
                 />
               </>
             )}
@@ -198,8 +259,12 @@ export const Model_Upload = () => {
               {selectedSubCategory && selectedSubCategory !== "other" && (
                 <>
                   <select
-                    value={selectedSubSubCategory}
-                    onChange={(e) => setSelectedSubSubCategory(e.target.value)}
+                    value={
+                      selectedSubSubCategory === "other"
+                        ? "other"
+                        : selectedSubSubCategory
+                    }
+                    onChange={handleSubSubCategoryChange}
                     className="mb-4 p-2 border border-gray-300 rounded w-full"
                   >
                     <option value="">Select Sub Sub Category</option>
@@ -219,11 +284,13 @@ export const Model_Upload = () => {
             </div>
             {selectedSubSubCategory === "other" && (
               <>
-                <label htmlFor="subsubcategory">Type Sub Sub Category</label>
+                <label htmlFor="customSubSubCategory">
+                  Type Sub Sub Category
+                </label>
                 <input
                   type="text"
-                  value={selectedSubSubCategory}
-                  onChange={(e) => setSelectedSubSubCategory(e.target.value)}
+                  value={customSubSubCategory}
+                  onChange={(e) => setCustomSubSubCategory(e.target.value)}
                 />
               </>
             )}
@@ -236,29 +303,37 @@ export const Model_Upload = () => {
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
-          <div>
-            <label htmlFor="price">Enter Price</label>
-            <input
-              type="text"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </div>
+
           <div>
             <label htmlFor="is_free">Is It Paid?</label>
             <input
               type="radio"
-              checked={!isFree}
-              onChange={() => setIsFree(false)}
-            />{" "}
+              checked={isFree}
+              onChange={() => setIsFree(true)}
+            />
             Paid
             <input
               type="radio"
-              checked={isFree}
-              onChange={() => setIsFree(true)}
-            />{" "}
+              checked={!isFree}
+              onChange={() => setIsFree(false)}
+            />
             Free
           </div>
+          {isFree === true ? (
+            <>
+              {" "}
+              <div>
+                <label htmlFor="price">Enter Price</label>
+                <input
+                  type="text"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+              </div>
+            </>
+          ) : (
+            ""
+          )}
           <div>
             <label htmlFor="tags">Enter Tags</label>
             <div className="space-y-4">
@@ -287,6 +362,15 @@ export const Model_Upload = () => {
                 ))}
               </div>
             </div>
+            <div>
+              <label htmlFor="modelFile">Upload Your 3D Model</label>
+              <input
+                onChange={(e) => setModelFile(e.target.value)}
+                type="file"
+                name="modelFile"
+                id=""
+              />
+            </div>
           </div>
         </form>
         <div>
@@ -295,6 +379,7 @@ export const Model_Upload = () => {
             <input type="file" onChange={(e) => setImage(e.target.files[0])} />
           </div>
         </div>
+        <button onClick={handleSubmit}>Upload Model</button>
       </div>
     </div>
   );
