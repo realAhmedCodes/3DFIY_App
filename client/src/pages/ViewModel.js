@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
 export const ViewModel = () => {
   const [models, setModels] = useState([]);
-
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/modelApi/models`);
+        const response = await fetch("http://localhost:8000/modelApi/models");
         const modelsData = await response.json();
         setModels(modelsData);
       } catch (err) {
@@ -18,17 +16,6 @@ export const ViewModel = () => {
 
     fetchData();
   }, []);
-
-  // Function to convert ArrayBuffer to base64
-  const arrayBufferToBase64 = (buffer) => {
-    let binary = "";
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
-  };
 
   return (
     <div>
@@ -42,12 +29,12 @@ export const ViewModel = () => {
             <p>{model.name}</p>
             <p>{model.price}</p>
 
-            {/* Render the image using the data from the Buffer object */}
+           
             {model.image && (
               <img
-                src={`data:image/jpeg;base64,${arrayBufferToBase64(
-                  model.image.data
-                )}`}
+                src={`http://localhost:8000/uploads/models/${model.image
+                  .split("\\")
+                  .pop()}`}
                 alt={model.name}
                 className="w-full h-auto"
               />
