@@ -63,7 +63,7 @@ console.log(userId, email, sellerType);
     };
     fetchData();
   }, []);
-
+console.log("Testing")
   useEffect(() => {
     if (selectedCategory && selectedCategory !== "other") {
       const fetchSubCategories = async () => {
