@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserData } from "../slices/UserData";
 import { Navbar } from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 export const ViewModel = () => {
   const [models, setModels] = useState([]);
 const { user_id, sellerType, email } = useSelector((state) => state.userData);
-useEffect(() => {
-  console.log(user_id, sellerType, email);
-}, [user_id, sellerType, email]);
+
+
+
+const navigate= useNavigate()
 
 
   useEffect(() => {
@@ -33,6 +35,7 @@ useEffect(() => {
         {models.map((model) => (
           <div
             key={model.model_id}
+            onClick={() => navigate(`/model/${model.model_id}`)}
             className="border rounded-md p-2 cursor-pointer hover:bg-gray-200"
           >
             <p>{model.name}</p>
