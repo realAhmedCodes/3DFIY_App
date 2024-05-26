@@ -1,40 +1,49 @@
 import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode"; // Ensure this import is correct
 
 export const DesignerProfile = () => {
   const [designer, setDesigner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/usersApi/designers");
-      if (!response.ok) {
-        throw new Error("Failed to fetch designer data");
-      }
-      const data = await response.json();
-      if (data.length === 0) {
-        throw new Error("No designer data available");
-      }
-      setDesigner(data[0]);
-      setLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
+  const [designerId, setDesignerId] = useState(null); 
 
   useEffect(() => {
-    fetchData();
+    const token = window.sessionStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.user_id;
+        setDesignerId(userId);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
   }, []);
+  console.log(designerId);
 
- const arrayBufferToBase64 = (buffer) => {
-   const bytes = new Uint8Array(buffer);
-   let binary = "";
-   for (let i = 0; i < bytes.byteLength; i++) {
-     binary += String.fromCharCode(bytes[i]);
-   }
-   return window.btoa(binary);
- };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!designerId) return; 
+
+      try {
+        const response = await fetch(
+          `http://localhost:8000/usersApi/designers/${designerId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch designer data");
+        }
+        const data = await response.json();
+        setDesigner(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [designerId]); 
 
   if (loading) {
     return (
@@ -59,31 +68,35 @@ export const DesignerProfile = () => {
       </div>
     );
   }
-
+console.log(designer.profile_pic)
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto px-4 py-8">
       <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
         <div className="flex items-center">
           <div className="flex-grow">
-            <h2 className="text-2xl font-bold flex items-center">
-              {designer.name}
-              <span className="ml-2 text-blue-500">✔</span>
-            </h2>
-            <p className="text-gray-600">{designer.location}</p>
-
-            <div className="flex items-center my-2 text-gray-700">
-              {designer.profile_pic && (
+            <div className="flex items-center mb-4">
+              <div>
                 <img
-                  src={arrayBufferToBase64(designer.profile_pic.data)}
+                  src={`http://localhost:8000/uploads/${designer.profile_pic
+                    .split("\\")
+                    .pop()}`}
                   alt={designer.name}
-                  className="w-32 h-32 rounded-full"
+                  className="w-16 h-16 rounded-full mr-4"
                 />
-              )}
+              </div>
+              ;
+              <div className="flex flex-col">
+                <h2 className="text-2xl font-bold">{designer.name}</h2>
+                <p className="text-gray-600">{designer.location}</p>
+              </div>
             </div>
-            <p className="italic">{designer.bio}</p>
+            <p className="italic text-gray-700">{designer.bio}</p>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+
+
