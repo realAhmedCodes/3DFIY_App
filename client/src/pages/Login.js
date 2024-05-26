@@ -12,7 +12,6 @@ export const Login = () => {
   const [check, setCheck] = useState("");
   const dispatch = useDispatch();
 
-
   const submitBtn = async (e) => {
     e.preventDefault();
 
@@ -44,7 +43,6 @@ export const Login = () => {
       }
     } catch (error) {
       console.error("Error during login:", error);
-    
     }
   };
 
