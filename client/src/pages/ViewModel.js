@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
-
+import { useDispatch, useSelector } from "react-redux";
+import { addUserData } from "../slices/UserData";
+import { Navbar } from "../components/Navbar";
 export const ViewModel = () => {
   const [models, setModels] = useState([]);
+const { user_id, sellerType, email } = useSelector((state) => state.userData);
+useEffect(() => {
+  console.log(user_id, sellerType, email);
+}, [user_id, sellerType, email]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,9 +23,11 @@ export const ViewModel = () => {
 
     fetchData();
   }, []);
-
+ 
+ 
   return (
     <div>
+      <Navbar></Navbar>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
         <h1 className="text-xl font-bold mb-2">Latest Models</h1>
         {models.map((model) => (
@@ -28,8 +37,7 @@ export const ViewModel = () => {
           >
             <p>{model.name}</p>
             <p>{model.price}</p>
-
-           
+            {console.log(model.image)}
             {model.image && (
               <img
                 src={`http://localhost:8000/uploads/models/${model.image
