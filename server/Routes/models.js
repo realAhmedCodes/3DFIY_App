@@ -4,6 +4,7 @@ const multer = require("multer");
 const Model = require("../models/Model");
 const path = require("path");
 const fs = require("fs");
+const sequelize = require("../sequelize");
 
 // Configure multer to store files in memory
 const storage = multer.memoryStorage();
@@ -115,6 +116,76 @@ router.get("/models", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch models" });
+  }
+});
+
+
+router.get("/models/:designerId", async (req, res) => {
+  const { designerId } = req.params;
+  console.log("swsw" ,designerId)
+
+  try {
+    const models = await Model.findAll({
+      where: { designer_id: designerId },
+    });
+
+    res.json(models);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/model/:modelId", async (req, res) => {
+  const { modelId } = req.params;
+
+  try {
+    const model = await Model.findByPk(modelId);
+    if (!model) {
+      return res.status(404).json({ error: "Model not found" });
+    }
+    res.json(model);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/modelDetail/:modelId", async (req, res) => {
+  const { modelId } = req.params;
+
+  try {
+    const [results] = await sequelize.query(
+      `
+      SELECT 
+        "Users".name AS name,
+        "Users".location AS location,
+        "Users".profile_pic AS profile_pic,
+        "Models".description,
+        "Models".price,
+        "Models".is_Free
+      FROM 
+        "Models"
+      JOIN 
+        "Designers" ON "Models".designer_id = "Designers".designer_id
+      JOIN 
+        "Users" ON "Designers".user_id = "Users".user_id
+      WHERE 
+        "Models".model_id = :modelId
+      `,
+      {
+        replacements: { modelId },
+      }
+    );
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Model not found" });
+    }
+
+    res.json(results[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
