@@ -23,8 +23,7 @@ const Designer = sequelize.define("Designer", {
     allowNull: false,
   },
   cnic_pic: {
-    type: DataTypes.BLOB,
-    unique: true,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   bio: {
@@ -36,5 +35,6 @@ const Designer = sequelize.define("Designer", {
     allowNull: true,
   },
 });
+
 
 module.exports = Designer;

@@ -34,15 +34,15 @@ export const User_SignUp = () => {
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const [profile_pic, setProfile_pic] = useState("");
+  const [profile_pic, setProfile_pic] = useState(null);
   const [location, setLocation] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
   const [cnic_number, setCnic_number] = useState("");
     const [bio, setBio] = useState("");
-  const [cnic_pic, setCnic_pic] = useState("");
+  const [cnic_pic, setCnic_pic] = useState(null);
  const [sellerType, setSellerType] = useState("Regular");
   const [nextComp, setNextComp] = useState(true);
-
+console.log(cnic_pic)
   useEffect(() => {
     if (userRef.current) {
       userRef.current.focus();
@@ -62,6 +62,9 @@ export const User_SignUp = () => {
     setErrMsg("");
   }, [username, pwd, matchPwd]);
 
+
+  // Your existing state variables and useEffect hooks here
+
   const SubmitBtn = async (e) => {
     e.preventDefault();
     const v1 = USER_REGEX.test(username);
@@ -70,26 +73,33 @@ export const User_SignUp = () => {
       setErrMsg("Invalid Entry");
       return;
     }
+
+    // Check if both profile_pic and cnic_pic are not null before submitting
+    if(sellerType==="Designer" || sellerType==="Printer Owner"){
+if (!profile_pic || !cnic_pic) {
+      setErrMsg("Please select profile picture and CNIC picture.");
+      return;
+    }
+    }
     
 
-
     try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("username", username);
+      formData.append("email", email);
+      formData.append("password", pwd);
+      formData.append("location", location);
+      formData.append("profile_pic", profile_pic);
+      formData.append("phoneNo", phoneNo);
+      formData.append("cnic_number", cnic_number);
+      formData.append("cnic_pic", cnic_pic); // Make sure cnic_pic is included here
+      formData.append("sellerType", sellerType);
+      formData.append("bio", bio);
+
       const response = await fetch("http://localhost:8000/usersApi/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          username,
-          email,
-          password: pwd,
-          location,
-          profile_pic,
-          phoneNo,
-          cnic_number,
-          cnic_pic,
-          sellerType,
-          bio
-        }),
+        body: formData, // Send FormData instead of JSON string
       });
       const data = await response.json();
       if (data.error) {

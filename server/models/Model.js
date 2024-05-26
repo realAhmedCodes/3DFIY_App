@@ -1,6 +1,6 @@
 // models/model.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../sequelize"); // Assuming you have a database configuration file
+const sequelize = require("../sequelize"); 
 const Category = require("./Category");
 const Designer = require("./Designer");
 
@@ -45,7 +45,7 @@ const Model = sequelize.define("Model", {
     allowNull: false,
   },
   image: {
-    type: DataTypes.BLOB("long"),
+    type: DataTypes.STRING,
     allowNull: false,
   },
   model_file: {

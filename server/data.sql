@@ -57,6 +57,9 @@ INSERT INTO Category
 SELECT * FROM category;
 
 
+ALTER TABLE "Users" ALTER COLUMN "profile_pic" TYPE VARCHAR;
+ALTER TABLE "Designers" ALTER COLUMN "cnic_pic" TYPE VARCHAR;
+
 
 username,
           email,

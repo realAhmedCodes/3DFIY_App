@@ -1,47 +1,57 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/Auth.module.css";
 import { useCookies } from "react-cookie";
-
-
-import { jwtDecode, InvalidTokenError } from "jwt-decode"; 
-
-
-
-
+import { addUserData } from "../slices/UserData";
+import { jwtDecode, InvalidTokenError } from "jwt-decode";
+import { useDispatch } from "react-redux";
 export const Login = () => {
- 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(null);
   const [check, setCheck] = useState("");
+  const dispatch = useDispatch();
+
 
   const submitBtn = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:8000/usersApi/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const response = await fetch("http://localhost:8000/usersApi/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.detail) {
-      setError(data.detail);
-    } else {
-      window.sessionStorage.setItem("token", data.token);
-      console.log("Login successful");
-      window.location.reload();
+      if (data.detail) {
+        setError(data.detail);
+      } else {
+        window.sessionStorage.setItem("token", data.token);
+
+        // Dispatch the addUserData action with user information
+        dispatch(
+          addUserData({
+            user_id: data.user_id,
+            email: data.email,
+            sellerType: data.sellerType,
+          })
+        );
+
+        console.log("Login successful");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    
     }
   };
+
   console.log(check);
   return (
     <div class="flex min-h-full flex-col justify-centerlg">
-     
-
       <div class="sm:mx-auto sm:w-full sm:max-w-sm mt-24">
-       
         <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Sign in to your account
         </h2>

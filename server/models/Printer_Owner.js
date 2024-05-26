@@ -22,8 +22,7 @@ const Printer_Owner = sequelize.define("Printer_Owner", {
     allowNull: false,
   },
   cnic_pic: {
-    type: DataTypes.BLOB,
-    unique: true,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   bio: {
@@ -35,7 +34,7 @@ const Printer_Owner = sequelize.define("Printer_Owner", {
     allowNull: true,
   },
   quality_certificate: {
-    type: DataTypes.BLOB, // Use DataTypes.BLOB for storing binary data like documents and pictures
+    type: DataTypes.BLOB, 
     allowNull: true,
   },
 });

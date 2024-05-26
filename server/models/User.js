@@ -30,7 +30,7 @@ const User = sequelize.define("User", {
     },
   },
   profile_pic: {
-    type: DataTypes.BLOB("long"),
+    type: DataTypes.STRING,
     allowNull: true,
   },
   password: {
@@ -46,5 +46,7 @@ const User = sequelize.define("User", {
     allowNull: false,
   }
 });
+
+
 
 module.exports = User;
