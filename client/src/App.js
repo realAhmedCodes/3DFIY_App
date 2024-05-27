@@ -6,7 +6,7 @@ import { Login } from './pages/Login';
 import { ViewModel } from './pages/ViewModel';
 import { DesignerProfile } from './pages/DesignerProfile';
 import { ModelDetail } from './pages/ModelDetail';
-
+import { UpdateModel } from './Management/UpdateModel';
 function App() {
   return (
     <div className="App">
@@ -18,6 +18,7 @@ function App() {
           <Route path="/ViewModels" element={<ViewModel />} />
           <Route path="/DesignerProfile" element={<DesignerProfile />} />
           <Route path="/model/:modelId" element={<ModelDetail />} />
+          <Route path="/updateModel/:modelId" element={<UpdateModel />} />
         </Routes>
       </Router>
     </div>
