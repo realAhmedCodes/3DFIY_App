@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { jwtDecode, InvalidTokenError } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 export const ModelDetail = () => {
   const { modelId } = useParams();
   const [model, setModel] = useState(null);
@@ -70,9 +71,24 @@ console.log(sellerType)
   const updateModelBtn=()=>{
      nav(`/updateModel/${modelId}`, { state: { model } });
   }
-const delModelBtn=()=>{
+const delModelBtn = async () => {
+  const isConfirmed = window.confirm(
+    "Are you sure you want to delete this model?"
+  );
 
-}
+  if (isConfirmed) {
+    try {
+      await axios.delete(
+        `http://localhost:8000/modelApi/deleteModel/${modelId}`
+      );
+      console.log("Model deleted successfully!");
+      // Optionally, you can navigate away or refresh the page after deletion
+      nav("/some-path"); // Adjust the path as necessary
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
   return (
     <div className="container mx-auto p-8">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
