@@ -61,6 +61,20 @@ ALTER TABLE "Users" ALTER COLUMN "profile_pic" TYPE VARCHAR;
 ALTER TABLE "Designers" ALTER COLUMN "cnic_pic" TYPE VARCHAR;
 
 
+CREATE TABLE Likes (
+  like_id SERIAL PRIMARY KEY,
+  model_id INTEGER NOT NULL REFERENCES "Models"(model_id),
+  user_id INTEGER NOT NULL REFERENCES "Users"(user_id),
+  liked boolean NOT NULL,
+  likes_count INTEGER NOT NULL
+);
+
+CREATE TABLE SavedModels (
+  saved_models SERIAL PRIMARY KEY,
+  model_id INTEGER NOT NULL REFERENCES "Models"(model_id),
+  user_id INTEGER NOT NULL REFERENCES "Users"(user_id)
+);
+
 username,
           email,
           password: pwd,
