@@ -36,8 +36,9 @@ export const Model_Upload = () => {
         const userId = decodedToken.user_id;
         const email= decodedToken.email;
         const sellerType=decodedToken.sellerType;
-console.log(userId, email, sellerType);
-        setDesigner_Id(userId);
+        const sellerId= decodedToken.seller_id
+console.log(userId, email, sellerType, sellerId);
+        setDesigner_Id(sellerId);
       }
     } catch (error) {
       if (error instanceof InvalidTokenError) {

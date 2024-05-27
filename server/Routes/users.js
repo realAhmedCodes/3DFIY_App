@@ -136,13 +136,23 @@ router.post("/login", async (req, res) => {
           where: { user_id: user.user_id },
         });
         sellerId = designer ? designer.designer_id : null;
-        tokenPayload.user_id = sellerId; // Include designer_id in token payload
+        tokenPayload = {
+          user_id: user.user_id,
+          email: user.email,
+          sellerType: user.sellerType,
+          seller_id: sellerId
+        };
       } else if (user.sellerType === "Printer Owner") {
         const printerOwner = await PrinterOwner.findOne({
           where: { user_id: user.user_id },
         });
         sellerId = printerOwner ? printerOwner.printerOwner_id : null;
-        tokenPayload.user_id = sellerId; // Include printerOwner_id in token payload
+        tokenPayload = {
+          user_id: user.user_id,
+          email: user.email,
+          sellerType: user.sellerType,
+          seller_id: user.sellerId,
+        };
       }
 
       const token = jwt.sign(

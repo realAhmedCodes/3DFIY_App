@@ -137,8 +137,8 @@ console.log(tags)
     try {
       if (token) {
         const decodedToken = jwtDecode(token);
-        const userId = decodedToken.user_id;
-        setDesigner_Id(userId);
+        const sellerId = decodedToken.seller_id;
+        setDesigner_Id(sellerId);
       }
     } catch (error) {
       if (error instanceof InvalidTokenError) {

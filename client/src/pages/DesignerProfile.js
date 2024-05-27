@@ -15,8 +15,8 @@ export const DesignerProfile = () => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        const userId = decodedToken.user_id;
-        setDesignerId(userId);
+        const sellerId = decodedToken.seller_id;
+        setDesignerId(sellerId);
       } catch (error) {
         console.error("Invalid token", error);
       }

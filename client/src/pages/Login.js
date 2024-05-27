@@ -29,14 +29,7 @@ export const Login = () => {
       } else {
         window.sessionStorage.setItem("token", data.token);
 
-        // Dispatch the addUserData action with user information
-        dispatch(
-          addUserData({
-            user_id: data.user_id,
-            email: data.email,
-            sellerType: data.sellerType,
-          })
-        );
+       
 
         console.log("Login successful");
         window.location.reload();
