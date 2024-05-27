@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { jwtDecode, InvalidTokenError } from "jwt-decode";
-
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export const UpdateModel = () => {
   const { modelId } = useParams();
   const location = useLocation();
@@ -17,8 +18,118 @@ export const UpdateModel = () => {
   const [designer_id, setDesigner_Id] = useState(null);
   const [category_id, setCategory_Id] = useState(model?.category_id || null);
   const [checkToken, setCheckToken] = useState("");
-
+   const [categories, setCategories] = useState([]);
+   const [selectedCategory, setSelectedCategory] = useState("");
+   const [customCategory, setCustomCategory] = useState("");
+   const [subcategories, setSubCategories] = useState([]);
+   const [selectedSubCategory, setSelectedSubCategory] = useState("");
+   const [customSubCategory, setCustomSubCategory] = useState("");
+   const [subSubcategories, setSubSubCategories] = useState([]);
+   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState("");
+   const [customSubSubCategory, setCustomSubSubCategory] = useState("");
+console.log(tags)
   const navigate = useNavigate();
+
+   const Chip = ({ label, onDelete }) => (
+     <div className="inline-block font-semibold py-2 pl-3 capitalize w-fit text-white px-2 rounded-full bg-blue-400">
+       <span>{label}</span>
+       <button
+         className="ml-2 text-gray-100 rounded-full text-center font-bold"
+         onClick={onDelete}
+       >
+         <FontAwesomeIcon className="w-3 text-red-600" icon={faXmark} />
+       </button>
+     </div>
+   );
+
+   const handleAddTags = (e) => {
+     e.preventDefault();
+     if (tagsInput.trim() !== "" && !tags.includes(tagsInput)) {
+       if (tags.length < 5) {
+         setTags([...tags, tagsInput]);
+         setTagsInput("");
+       } else {
+         alert("You can only add up to 5 skills.");
+       }
+     }
+   };
+
+
+   useEffect(() => {
+     const fetchData = async () => {
+       try {
+         const response = await fetch(
+           "http://localhost:8000/categoryApi/category"
+         );
+         const categoryData = await response.json();
+         setCategories(categoryData);
+       } catch (err) {
+         console.log(err);
+       }
+     };
+     fetchData();
+   }, []);
+   console.log("Testing");
+   useEffect(() => {
+     if (selectedCategory && selectedCategory !== "other") {
+       const fetchSubCategories = async () => {
+         try {
+           const response = await fetch(
+             `http://localhost:8000/categoryApi/subcategories/${selectedCategory}`
+           );
+           const subCategoryData = await response.json();
+           setSubCategories(subCategoryData);
+         } catch (err) {
+           console.log(err);
+         }
+       };
+       fetchSubCategories();
+     } else {
+       setSubCategories([]);
+     }
+   }, [selectedCategory]);
+
+   useEffect(() => {
+     if (selectedSubCategory && selectedSubCategory !== "other") {
+       const fetchSubSubCategories = async () => {
+         try {
+           const response = await fetch(
+             `http://localhost:8000/categoryApi/subcategories/${selectedSubCategory}`
+           );
+           const subSubCategoryData = await response.json();
+           setSubSubCategories(subSubCategoryData);
+         } catch (err) {
+           console.log(err);
+         }
+       };
+       fetchSubSubCategories();
+     } else {
+       setSubSubCategories([]);
+     }
+   }, [selectedSubCategory]);
+
+
+    const handleCategoryChange = (e) => {
+      setSelectedCategory(e.target.value);
+      setCategory_Id(e.target.value);
+      setSelectedSubCategory(""); // Reset subcategory
+      setSelectedSubSubCategory(""); // Reset sub-subcategory
+    };
+
+    const handleSubCategoryChange = (e) => {
+      setSelectedSubCategory(e.target.value);
+      setCategory_Id(e.target.value);
+      setSelectedSubSubCategory(""); // Reset sub-subcategory
+    };
+
+    const handleSubSubCategoryChange = (e) => {
+      setSelectedSubSubCategory(e.target.value);
+      setCategory_Id(e.target.value);
+    };
+   const handleDeleteTags = (tagsToDelete) => {
+     const updatedTags = tags.filter((tag) => tag !== tagsToDelete);
+     setTags(updatedTags);
+   };
 
   useEffect(() => {
     const token = window.sessionStorage.getItem("token");
@@ -45,6 +156,7 @@ export const UpdateModel = () => {
     formData.append("description", description);
     formData.append("price", price);
     formData.append("is_free", isFree);
+    formData.append("tags", tags);
     if (image) formData.append("image", image);
     if (modelFile) formData.append("modelFile", modelFile);
 
@@ -52,7 +164,7 @@ export const UpdateModel = () => {
       const response = await fetch(
         `http://localhost:8000/modelApi/updateModel/${modelId}`,
         {
-          method: "POST",
+          method: "PUT",
           body: formData,
         }
       );
@@ -61,7 +173,7 @@ export const UpdateModel = () => {
         console.log(data.error);
       } else {
         console.log("Model updated successfully:", data);
-        navigate(`/model/${modelId}`); // Redirect to model detail page after update
+        navigate(`/model/${modelId}`); 
       }
     } catch (error) {
       console.error(error);
@@ -80,6 +192,111 @@ export const UpdateModel = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
+          </div>
+          <div>
+            <select
+              value={selectedCategory === "other" ? "other" : selectedCategory}
+              onChange={handleCategoryChange}
+              className="mb-4 p-2 border border-gray-300 rounded w-full"
+            >
+              <option value="">Select Category</option>
+              {Array.isArray(categories) &&
+                categories.map((category) => (
+                  <option
+                    key={category.category_id}
+                    value={category.category_id}
+                  >
+                    {category.name}
+                  </option>
+                ))}
+              <option value="other">Other</option>
+            </select>
+            {selectedCategory === "other" && (
+              <>
+                <label htmlFor="customCategory">Type Category</label>
+                <input
+                  type="text"
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                />
+              </>
+            )}
+            <div>
+              {selectedCategory && selectedCategory !== "other" && (
+                <>
+                  <select
+                    value={
+                      selectedSubCategory === "other"
+                        ? "other"
+                        : selectedSubCategory
+                    }
+                    onChange={handleSubCategoryChange}
+                    className="mb-4 p-2 border border-gray-300 rounded w-full"
+                  >
+                    <option value="">Select Sub Category</option>
+                    {Array.isArray(subcategories) &&
+                      subcategories.map((subCategory) => (
+                        <option
+                          key={subCategory.category_id}
+                          value={subCategory.category_id}
+                        >
+                          {subCategory.name}
+                        </option>
+                      ))}
+                    <option value="other">Other</option>
+                  </select>
+                </>
+              )}
+            </div>
+            {selectedSubCategory === "other" && (
+              <>
+                <label htmlFor="customSubCategory">Type Sub Category</label>
+                <input
+                  type="text"
+                  value={customSubCategory}
+                  onChange={(e) => setCustomSubCategory(e.target.value)}
+                />
+              </>
+            )}
+            <div>
+              {selectedSubCategory && selectedSubCategory !== "other" && (
+                <>
+                  <select
+                    value={
+                      selectedSubSubCategory === "other"
+                        ? "other"
+                        : selectedSubSubCategory
+                    }
+                    onChange={handleSubSubCategoryChange}
+                    className="mb-4 p-2 border border-gray-300 rounded w-full"
+                  >
+                    <option value="">Select Sub Sub Category</option>
+                    {Array.isArray(subSubcategories) &&
+                      subSubcategories.map((subSubCategory) => (
+                        <option
+                          key={subSubCategory.category_id}
+                          value={subSubCategory.category_id}
+                        >
+                          {subSubCategory.name}
+                        </option>
+                      ))}
+                    <option value="other">Other</option>
+                  </select>
+                </>
+              )}
+            </div>
+            {selectedSubSubCategory === "other" && (
+              <>
+                <label htmlFor="customSubSubCategory">
+                  Type Sub Sub Category
+                </label>
+                <input
+                  type="text"
+                  value={customSubSubCategory}
+                  onChange={(e) => setCustomSubSubCategory(e.target.value)}
+                />
+              </>
+            )}
           </div>
           <div>
             <label htmlFor="description">Enter Description</label>
@@ -128,21 +345,20 @@ export const UpdateModel = () => {
                   className="border border-gray-300 px-3 py-2 rounded-md w-64 focus:outline-none focus:border-blue-500"
                 />
                 <button
-                  onClick={() => {
-                    if (tagsInput.trim() !== "") {
-                      setTags([...tags, tagsInput.trim()]);
-                      setTagsInput("");
-                    }
-                  }}
+                  onClick={
+                    handleAddTags
+                  }
                 >
                   Add Tag
                 </button>
               </div>
-              <div>
+              <div className="space-x-2">
                 {tags.map((tag, index) => (
-                  <span key={index} className="tag">
-                    {tag}
-                  </span>
+                  <Chip
+                    key={index}
+                    label={tag}
+                    onDelete={() => handleDeleteTags(tag)}
+                  />
                 ))}
               </div>
             </div>
