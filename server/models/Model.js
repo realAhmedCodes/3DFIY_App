@@ -1,6 +1,6 @@
 // models/model.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../sequelize"); 
+const sequelize = require("../sequelize");
 const Category = require("./Category");
 const Designer = require("./Designer");
 
@@ -51,6 +51,10 @@ const Model = sequelize.define("Model", {
   model_file: {
     type: DataTypes.BLOB("long"),
     allowNull: false,
+  },
+  tags: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    allowNull: true,
   },
   likes_count: {
     type: DataTypes.INTEGER,

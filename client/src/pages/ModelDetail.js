@@ -45,6 +45,7 @@ console.log(sellerType)
         }
         const data = await response.json();
         setModel(data);
+        
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -90,6 +91,7 @@ const delModelBtn=()=>{
               )}
               <h2 className="text-lg">{model.user_location}</h2>
             </div>
+            <h1>{model.tags}</h1>
           </div>
           <h1 className="text-2xl font-bold mb-4">{model.model_name}</h1>
           <p className="text-gray-700 mb-4">{model.description}</p>

@@ -122,6 +122,7 @@ export const DesignerProfile = () => {
           >
             <p>{model.name}</p>
             <p>{model.price}</p>
+           
             {console.log(model.image)}
             {model.image && (
               <img

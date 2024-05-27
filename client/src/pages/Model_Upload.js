@@ -112,6 +112,7 @@ console.log("Testing")
     formData.append("price", price);
     formData.append("is_free", isFree);
     formData.append("image", image);
+     formData.append("tags", tags);
     formData.append("modelFile", modelFile);
 
     try {
@@ -353,6 +354,7 @@ console.log("Testing")
               <div className="flex items-center space-x-4">
                 <input
                   type="text"
+                  
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
                   placeholder="Enter skill..."
