@@ -169,6 +169,59 @@ router.post("/login", async (req, res) => {
 
 
 /*
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(401).json({ detail: "User does not exist!" });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (match) {
+      let sellerId = null;
+      let tokenPayload = {
+        user_id: user.user_id,
+        email: user.email,
+        sellerType: user.sellerType,
+      };
+
+      if (user.sellerType === "Designer") {
+        const designer = await Designer.findOne({
+          where: { user_id: user.user_id },
+        });
+        sellerId = designer ? designer.designer_id : null;
+        tokenPayload.user_id = sellerId; // Include designer_id in token payload
+      } else if (user.sellerType === "Printer Owner") {
+        const printerOwner = await PrinterOwner.findOne({
+          where: { user_id: user.user_id },
+        });
+        sellerId = printerOwner ? printerOwner.printerOwner_id : null;
+        tokenPayload.user_id = sellerId; // Include printerOwner_id in token payload
+      }
+
+      const token = jwt.sign(
+        tokenPayload,
+        `${process.env.ACCESS_TOKEN_SECRET}`,
+        {
+          expiresIn: "1hr",
+        }
+      );
+
+      res.json({ email: user.email, token });
+    } else {
+      res.status(401).json({ detail: "Login failed" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ detail: "Internal Server Error" });
+  }
+});
+
+/////////*
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
