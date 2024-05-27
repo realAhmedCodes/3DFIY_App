@@ -9,6 +9,9 @@ export const ModelDetail = () => {
   const [error, setError] = useState(null);
 const [checkToken, setCheckToken] = useState("");
 const[sellerType, setSellerType]= useState("")
+
+
+const nav=useNavigate()
 console.log(sellerType)
    useEffect(() => {
      const token = window.sessionStorage.getItem("token");
@@ -63,7 +66,12 @@ console.log(sellerType)
   if (!model) {
     return <div>No model found</div>;
   }
+  const updateModelBtn=()=>{
+     nav(`/updateModel/${modelId}`, { state: { model } });
+  }
+const delModelBtn=()=>{
 
+}
   return (
     <div className="container mx-auto p-8">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
@@ -97,20 +105,35 @@ console.log(sellerType)
             )}
           </div>
           <div className="flex items-center justify-between">
-            {model.isFree===false?<>   <h3 className="text-xl font-bold">{model.price}</h3></>:("")}
-         
-          <div>
-            <button>Save Model</button>
+            {model.isFree === false ? (
+              <>
+               
+                <h3 className="text-xl font-bold">{model.price}</h3>
+              </>
+            ) : (
+              ""
+            )}
 
-          </div>
-          <div>
-          {sellerType==="Designer"?<> <button>Update Model</button>
-            <button>Delete Model</button></>:("")}
-           
-          </div>
-          <div>
-            {sellerType!=="Designer"?<><button>Save 3D Model</button></>:("")}
-          </div>
+            <div>
+              {sellerType !== "Designer" ? (
+                <>
+                  <button>Save 3D Model</button>
+                </>
+              ) : (
+                ""
+              )}
+            </div>
+            <div>
+              {sellerType === "Designer" ? (
+                <>
+                 
+                  <button onClick={updateModelBtn}>Update Model</button>
+                  <button onClick={delModelBtn}>Delete Model</button>
+                </>
+              ) : (
+                ""
+              )}
+            </div>
           </div>
         </div>
       </div>

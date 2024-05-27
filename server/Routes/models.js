@@ -158,12 +158,14 @@ router.get("/modelDetail/:modelId", async (req, res) => {
     const [results] = await sequelize.query(
       `
       SELECT 
-        "Users".name AS name,
-        "Users".location AS location,
+        "Users".name AS user_name,
+        "Users".location AS user_location,
         "Users".profile_pic AS profile_pic,
+        "Models".name As model_name,
         "Models".description,
         "Models".price,
-        "Models".is_Free
+        "Models".is_Free,
+        "Models".image
       FROM 
         "Models"
       JOIN 
