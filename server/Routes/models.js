@@ -205,6 +205,35 @@ router.put(
 );
 
 
+router.delete("/deleteModel/:modelId", async (req, res) => {
+  const { modelId } = req.params;
+
+  try {
+  
+    const modelToDelete = await Model.findByPk(modelId);
+    if (!modelToDelete) {
+      return res.status(404).json({ error: "Model not found" });
+    }
+
+
+    if (modelToDelete.model_file) {
+      fs.unlinkSync(modelToDelete.model_file);
+    }
+    if (modelToDelete.image) {
+      fs.unlinkSync(modelToDelete.image);
+    }
+
+
+    await modelToDelete.destroy();
+
+    res.status(200).json({ message: "Model deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete model" });
+  }
+});
+
+
 
 router.get("/models", async (req, res) => {
   try {
