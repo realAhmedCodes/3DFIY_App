@@ -17,7 +17,7 @@ export const Model_Upload = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [isFree, setIsFree] = useState(null);
+  const [isFree, setIsFree] = useState(false);
   const [image, setImage] = useState(null);
   const [tags, setTags] = useState([]);
   const [tagsInput, setTagsInput] = useState("");
@@ -47,7 +47,7 @@ console.log(userId, email, sellerType);
   }, []);
 
  
-
+console.log(isFree, "ifgee")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -188,6 +188,11 @@ console.log("Testing")
     setSelectedSubSubCategory(e.target.value);
     setCategory_Id(e.target.value);
   };
+
+  
+  const handleIsFreeChange = (e) => {
+    setIsFree(e.target.value === "true");
+  };
   return (
     <div className="main_div">
       <div className="form_div">
@@ -313,25 +318,23 @@ console.log("Testing")
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
-
-          <div>
-            <label htmlFor="is_free">Is It Paid?</label>
-            <input
-              type="radio"
-              checked={isFree}
-              onChange={() => setIsFree(true)}
-            />
-            Paid
-            <input
-              type="radio"
-              checked={!isFree}
-              onChange={() => setIsFree(false)}
-            />
-            Free
-          </div>
+          <label htmlFor="is_free">Is It Paid?</label>
+          <input
+            type="radio"
+            value={false}
+            checked={!isFree}
+            onChange={handleIsFreeChange}
+          />
+          <span className="ml-2">No</span>
+          <input
+            type="radio"
+            value={true}
+            checked={isFree}
+            onChange={handleIsFreeChange}
+          />
+          <span className="ml-2">Yes</span>
           {isFree === true ? (
             <>
-              {" "}
               <div>
                 <label htmlFor="price">Enter Price</label>
                 <input
