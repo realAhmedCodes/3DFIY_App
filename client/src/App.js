@@ -7,11 +7,15 @@ import { ViewModel } from './pages/ViewModel';
 import { DesignerProfile } from './pages/DesignerProfile';
 import { ModelDetail } from './pages/ModelDetail';
 import { UpdateModel } from './Management/UpdateModel';
+import { Home } from './pages/Home';
+import { ModelCal } from './pages/ModelCal';
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/upload" element={<ModelCal />} />
           <Route path="/User_SignUp" element={<User_SignUp />} />
           <Route path="/Model_Upload" element={<Model_Upload />} />
           <Route path="/Login" element={<Login />} />

@@ -48,7 +48,7 @@ console.log(userId, email, sellerType, sellerId);
   }, []);
 
  
-console.log(isFree, "ifgee")
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,7 +64,7 @@ console.log(isFree, "ifgee")
     };
     fetchData();
   }, []);
-console.log("Testing")
+
   useEffect(() => {
     if (selectedCategory && selectedCategory !== "other") {
       const fetchSubCategories = async () => {
@@ -115,7 +115,7 @@ console.log("Testing")
     formData.append("image", image);
      formData.append("tags", tags);
     formData.append("modelFile", modelFile);
-
+console.log(modelFile)
     try {
       const response = await fetch(
         "http://localhost:8000/modelApi/uploadModel",

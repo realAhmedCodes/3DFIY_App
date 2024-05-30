@@ -11,6 +11,9 @@ const sequelize = require("./sequelize");
 const userRouter = require("./Routes/users.js");
 const categoryRouter= require("./Routes/category.js")
 const modelRouter= require("./Routes/models.js")
+const likeRouter= require("./Routes/modelLikes.js")
+const saveRouter= require("./Routes/saveModels.js")
+const costRouter = require("./Routes/CostCal.js")
 
 // Server Setup
 app.use(cors())
@@ -18,6 +21,9 @@ app.use(express.json())
 app.use("/usersApi", userRouter);
 app.use("/categoryApi", categoryRouter)
 app.use("/modelApi", modelRouter)
+app.use("/likeApi", likeRouter)
+app.use("/saveModelsApi", saveRouter)
+app.use("/costApi", costRouter)
 
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
